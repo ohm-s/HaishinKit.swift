@@ -59,14 +59,7 @@ final class PreferenceViewController: UIViewController {
         rtmpStream.attachAudio(AVCaptureDevice.default(for: .audio)) { error in
             logger.warn(error.description)
         }
-        if turnOnCamera.isOn {
-            rtmpStream.attachCamera(DeviceUtil.device(withPosition: currentPosition)) { error in
-                logger.warn(error.description)
-            }
-        }
-        else {
-            rtmpStream.attachScreen(ScreenCaptureSession(shared: UIApplication.shared))
-        }
+        
 
          
         rtmpStream.addObserver(self, forKeyPath: "currentFPS", options: .new, context: nil)
@@ -88,6 +81,15 @@ final class PreferenceViewController: UIViewController {
         pageTitle.text = urlField?.text
         rtmpUrl = urlField?.text ?? ""
         rtmpSec = streamNameField?.text ?? ""
+        
+        if turnOnCamera.isOn {
+            rtmpStream.attachCamera(DeviceUtil.device(withPosition: currentPosition)) { error in
+                logger.warn(error.description)
+            }
+        }
+        else {
+            rtmpStream.attachScreen(ScreenCaptureSession(shared: UIApplication.shared))
+        }
         
         if streamToggle.isSelected {
             turnOnCamera.isEnabled = true
