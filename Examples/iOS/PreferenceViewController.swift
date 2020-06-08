@@ -10,7 +10,8 @@ final class PreferenceViewController: UIViewController {
     @IBOutlet weak var streamToggle: UIButton!
     @IBOutlet private weak var urlField: UITextField?
     @IBOutlet private weak var streamNameField: UITextField?
-
+    @IBOutlet weak var turnOnCamera: UISwitch!
+    
     @IBOutlet weak var pageTitle: UILabel!
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -58,10 +59,15 @@ final class PreferenceViewController: UIViewController {
         rtmpStream.attachAudio(AVCaptureDevice.default(for: .audio)) { error in
             logger.warn(error.description)
         }
-//        rtmpStream.attachScreen(ScreenCaptureSession(shared: UIApplication.shared))
-        rtmpStream.attachCamera(DeviceUtil.device(withPosition: currentPosition)) { error in
-                   logger.warn(error.description)
-               }
+        if turnOnCamera.isOn {
+            rtmpStream.attachCamera(DeviceUtil.device(withPosition: currentPosition)) { error in
+                logger.warn(error.description)
+            }
+        }
+        else {
+            rtmpStream.attachScreen(ScreenCaptureSession(shared: UIApplication.shared))
+        }
+
          
         rtmpStream.addObserver(self, forKeyPath: "currentFPS", options: .new, context: nil)
     }
