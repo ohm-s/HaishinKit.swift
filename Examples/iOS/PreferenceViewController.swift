@@ -90,12 +90,14 @@ final class PreferenceViewController: UIViewController {
         rtmpSec = streamNameField?.text ?? ""
         
         if streamToggle.isSelected {
+            turnOnCamera.isEnabled = true
             UIApplication.shared.isIdleTimerDisabled = false
             rtmpConnection.close()
             rtmpConnection.removeEventListener(.rtmpStatus, selector: #selector(rtmpStatusHandler), observer: self)
             rtmpConnection.removeEventListener(.ioError, selector: #selector(rtmpErrorHandler), observer: self)
             streamToggle.setTitle("Start", for: [])
         } else {
+            turnOnCamera.isEnabled = false
             UIApplication.shared.isIdleTimerDisabled = true
             rtmpConnection.addEventListener(.rtmpStatus, selector: #selector(rtmpStatusHandler), observer: self)
             rtmpConnection.addEventListener(.ioError, selector: #selector(rtmpErrorHandler), observer: self)
