@@ -2,11 +2,16 @@ import UIKit
 import HaishinKit
 import Photos
 import VideoToolbox
+import GLKit
 
 final class PreferenceViewController: UIViewController {
     
     private static let maxRetryCount = 10
     
+    @IBOutlet weak var turnOnScreen: UISwitch!
+    @IBOutlet weak var glView: GLKView!
+    @IBOutlet weak var stackElement: UIStackView!
+    @IBOutlet weak var testImage: UIImageView!
     @IBOutlet weak var streamToggle: UIButton!
     @IBOutlet private weak var urlField: UITextField?
     @IBOutlet private weak var streamNameField: UITextField?
@@ -38,15 +43,17 @@ final class PreferenceViewController: UIViewController {
             rtmpStream.orientation = orientation
         }
         rtmpStream.captureSettings = [
-            .sessionPreset: AVCaptureSession.Preset.hd1280x720,
+            .sessionPreset: AVCaptureSession.Preset.cif352x288,
             .continuousAutofocus: true,
             .continuousExposure: true
             // .preferredVideoStabilizationMode: AVCaptureVideoStabilizationMode.auto
         ]
-        rtmpStream.videoSettings = [
-            .width: 720,
-            .height: 1280
-        ]
+       
+//
+//        rtmpStream.videoSettings = [
+//            .width: 720,
+//            .height: 1280
+//        ]
         rtmpStream.mixer.recorder.delegate = ExampleRecorderDelegate.shared
 
         videoBitrateValue = 32768  / 1024
@@ -87,8 +94,8 @@ final class PreferenceViewController: UIViewController {
                 logger.warn(error.description)
             }
         }
-        else {
-            rtmpStream.attachScreen(ScreenCaptureSession(shared: UIApplication.shared))
+        if turnOnScreen.isOn {
+            rtmpStream.attachScreen(ScreenCaptureSession(shared: UIApplication.shared))      
         }
         
         if streamToggle.isSelected {
@@ -149,6 +156,18 @@ final class PreferenceViewController: UIViewController {
     private func rtmpErrorHandler(_ notification: Notification) {
         logger.error(notification)
         rtmpConnection.connect(rtmpUrl)
+    }
+    
+    @IBAction func turnOnScreenChanged(_ sender: Any) {
+        if turnOnScreen.isOn {
+            turnOnCamera.setOn(false, animated: false);
+        }
+    }
+    
+    @IBAction func turnOnCameraChanged(_ sender: Any) {
+        if turnOnCamera.isOn {
+            turnOnScreen.setOn(false, animated: false);
+        }
     }
 }
 
